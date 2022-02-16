@@ -52,6 +52,7 @@ class Game extends React.Component {
         this.state = {
             history: [{
                 squares : Array(9).fill(null),
+                marker : [0, 0],
             }],            
             xIsNext: true,
             stepNumber: 0,
@@ -66,14 +67,19 @@ class Game extends React.Component {
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
+        let marker = repere(i);
+        //console.log(marker);
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
                 squares: squares,
+                marker: marker,
             }]),
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length,
         });
+        //console.log(current.marker);
+        //console.log(history);
     }
 
     jumpTo(step) {
@@ -86,6 +92,7 @@ class Game extends React.Component {
     render() {
 
         const history = this.state.history;
+        //console.log(history);
         const current = history[history.length - 1];
         const winner = calculateWinner(current.squares);
 
@@ -94,7 +101,7 @@ class Game extends React.Component {
             //console.log('move', move);
             //console.log('obj', obj);
             const desc = move ?
-                'Revenir au tour n°' + move :
+                'Revenir au tour n°' + move + ' | C:' + step.marker[0] + ' & ' + step.marker[1]:
                 'Revenir au début de la partie';
             return (
                 <li key={move}>
@@ -155,4 +162,12 @@ function calculateWinner(squares) {
       }
     }
     return null;
+}
+
+function repere(step, line_num, column_num){
+    line_num = (typeof line_num !== 'undefined') ? line_num : 3;
+    column_num = (typeof column_num !== 'undefined') ? column_num : 3;
+    let line = Math.ceil((step+1)/column_num);
+    let column = ((column_num -((column_num * line ) - step)+1));
+    return [column, line];
 }
